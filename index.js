@@ -19,6 +19,7 @@ const content = async () => {
         model: "text-davinci-003",
         prompt: generatePrompt(),
         temperature: 0.6,
+        presence_penalty: 0.6,
         max_tokens: 1000
     });
     // console.log("completion.data: ", completion.data)
@@ -46,7 +47,7 @@ function generatePrompt() {
 const tweet = async () => {
     try {
         const result = await content();
-        rwClient.v2.tweet(result);
+        // rwClient.v2.tweet(result);
         // twitter.txt.parseTweet(result);
     } catch (e) {
         console.error(e);
