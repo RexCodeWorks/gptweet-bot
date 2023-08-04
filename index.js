@@ -1,7 +1,6 @@
 const { Configuration, OpenAIApi } = require("openai");
 const rwClient = require("./twitterClient.js");
 const CronJob = require("cron").CronJob;
-const twitter = require('twitter-text')
 // import fetch from 'node-fetch';
 
 
@@ -30,14 +29,14 @@ const content = async () => {
 
 function generatePrompt() {
 
-    return `Please provide a 'Daily Weight Loss Tip' tweet for my weight loss and health Twitter account. The tweet should follow this format and maximum 250 characters include tags:
+    return `Please provide a 'Daily Weight Loss Tip' tweet for my weight loss and health Twitter account. The tweet must follow this format and the tweet must limited between 100 characters and 280 characters and must add linebreak between sections(title, tip, why, act, hashtags):
     🌟 Daily Weight Loss Tip 🌟
     
-    💡 Tip: [Your weight loss tip here] [Tweet-specific emoji related to the tip]
+    💡 Tip: [Your weight loss tip here]
 
     ❓ Why: [Explain the benefits and reasons for the tip]
 
-    ✅ [Offer actionable advice or steps related to the tip]
+    ✅ Act: [Offer actionable advice or steps related to the tip]
 
     #[Hashtags related to the topic]\n`;
 }
@@ -46,9 +45,24 @@ function generatePrompt() {
 
 const tweet = async () => {
     try {
-        const result = await content();
-        rwClient.v2.tweet(result);
-        // twitter.txt.parseTweet(result);
+
+        let counter = 0;
+        let result = "";
+        while (counter < 5) {
+            result = await content();
+            console.log("result.length: ", result.length);
+
+            if (result.length < 280) {
+                rwClient.v2.tweet(result);
+                break;
+            } else {
+                counter++;
+                console.log("cannot find good one.");
+                console.log("counter: ", counter);
+            }
+        }
+
+
     } catch (e) {
         console.error(e);
     }
