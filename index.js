@@ -47,7 +47,7 @@ function generatePrompt() {
 const tweet = async () => {
     try {
         const result = await content();
-        // rwClient.v2.tweet(result);
+        rwClient.v2.tweet(result);
         // twitter.txt.parseTweet(result);
     } catch (e) {
         console.error(e);
