@@ -30,7 +30,7 @@ const content = async () => {
 
 function generatePrompt() {
 
-    return `Please provide a 'Daily Weight Loss Tip' tweet for my weight loss and health Twitter account. The tweet should follow this format and maximum 280 characters include tags:
+    return `Please provide a 'Daily Weight Loss Tip' tweet for my weight loss and health Twitter account. The tweet should follow this format and maximum 250 characters include tags:
     🌟 Daily Weight Loss Tip 🌟
     
     💡 Tip: [Your weight loss tip here] [Tweet-specific emoji related to the tip]
