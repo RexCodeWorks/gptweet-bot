@@ -12,11 +12,11 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-const content = async () => {
+const content = async (type) => {
 
     const completion = await openai.createCompletion({
         model: "text-davinci-003",
-        prompt: generatePrompt(),
+        prompt: generatePrompt(type),
         temperature: 0.6,
         presence_penalty: 0.6,
         max_tokens: 1000
@@ -27,19 +27,32 @@ const content = async () => {
 
 }
 
-function generatePrompt() {
+function generatePrompt(type) {
 
-    return `Please provide a 'Daily Weight Loss Tip' tweet for my weight loss and health Twitter account. The tweet must follow this format and the tweet must limited between 100 characters and 280 characters and must add linebreak between sections(title, tip, why, act, hashtags):
-    🌟 Daily Weight Loss Tip 🌟
-    
-    💡 Tip: [Your weight loss tip here]
+    if (type == "quote") {
+        return `Please provide a 'Motivational Quote' tweet for my weight loss and health Twitter account. The tweet must follow this format and the tweet must limited between 50 characters and 270 characters and must add linebreak between sections(title, quote, hashtags):
 
-    ❓ Why: [Explain the benefits and reasons for the tip]
+        🌟 Motivational Quote 🌟
+        
+        💬 [Your motivational quote here]
+        
+        #[Hashtags related to motivation and inspiration]\n`;
+    } else {
+        return `Please provide a 'Daily Weight Loss Tip' tweet for my weight loss and health Twitter account. The tweet must follow this format and the tweet must limited between 100 characters and 280 characters and must add linebreak between sections(title, tip, why, act, hashtags):
+        🌟 Daily Weight Loss Tip 🌟
+        
+        💡 Tip: [Your weight loss tip here]
 
-    ✅ Act: [Offer actionable advice or steps related to the tip]
+        ❓ Why: [Explain the benefits and reasons for the tip]
 
-    #[Hashtags related to the topic]\n`;
+        ✅ Act: [Offer actionable advice or steps related to the tip]
+
+        #[Hashtags related to the topic]\n`;
+    }
+
 }
+
+
 
 
 
@@ -48,8 +61,9 @@ const tweet = async () => {
 
         let counter = 0;
         let result = "";
+        // try only 5 times
         while (counter < 5) {
-            result = await content();
+            result = await content("tips");
             console.log("result.length: ", result.length);
 
             if (result.length < 280) {
@@ -62,6 +76,13 @@ const tweet = async () => {
             }
         }
 
+        // if every tweet meet limit of lenth, tweet quote
+        if (counter == 5) {
+            result = await content("quote");
+            if (result.length < 280) {
+                rwClient.v2.tweet(result);
+            }
+        }
 
     } catch (e) {
         console.error(e);
